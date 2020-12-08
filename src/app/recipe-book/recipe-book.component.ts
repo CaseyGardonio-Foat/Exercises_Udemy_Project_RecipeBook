@@ -11,7 +11,7 @@ export class RecipeBookComponent implements OnInit {
 
   constructor() { }
 
-  ngOnInit(): void {
+  ngOnInit(){
   }
 
 }

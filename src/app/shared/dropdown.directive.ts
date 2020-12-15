@@ -12,4 +12,10 @@ export class DropdownDirective {
 
     }
 
+    /* to put close the dropdown with a click anywhere on the page, replace the above @HostListener code with this:
+    @HostListener('document:click', [$event]') toggleOpen(eventData: Event){
+        this.dropdownOpen = this.elRef.nativeElement.contains(event.target) ? this.isOpen: false;
+    }
+    constructor(private elRef: ElementRef) {}
+    *(n.b remember to import ElementRef from @angular/core) */
 }

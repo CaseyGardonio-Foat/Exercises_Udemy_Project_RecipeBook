@@ -17,5 +17,8 @@ export class DropdownDirective {
         this.dropdownOpen = this.elRef.nativeElement.contains(event.target) ? this.isOpen: false;
     }
     constructor(private elRef: ElementRef) {}
-    *(n.b remember to import ElementRef from @angular/core) */
+    *(n.b remember to import ElementRef from @angular/core) 
+    
+    apply this directive to the document element of the html instead of the dropdown element*/
+
 }

@@ -1,5 +1,6 @@
-import { Component, ElementRef, EventEmitter, OnInit, ViewChild, Output } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Ingredient } from 'src/app/shared/ingredient.model';
+import { ShoppingListService } from '../shopping-list.service'
 
 @Component({
   selector: 'app-shopping-list-edit',
@@ -13,10 +14,8 @@ export class ShoppingListEditComponent implements OnInit {
   @ViewChild('amountInput') amountInputRef: ElementRef;
   // ingredientAdded = new EventEmitter<{name: string, amount: number}>();
   //the type passed above in the <> corresponds to the objects in the ingredients array in shopping-list
-  @Output() ingredientAdded = new EventEmitter<Ingredient>();
-  //since we also have an INgredient model in the "shared" directory, we can use that as the type instead
 
-  constructor() { }
+  constructor(private shoppingListService: ShoppingListService) {}
 
   ngOnInit(): void {
   }
@@ -30,7 +29,8 @@ export class ShoppingListEditComponent implements OnInit {
     //lines 26 and 27 assign the values of nameInputRef and amountInputRef as the values for the properties of this newIngredient object
     //remember, this.nameInputRef.nativeElement.value is equal to the user input into the input field referenced with #nameInput
     //const is used instead of let because these variables will only be assigned values one time for each new Item added by this method
-    this.ingredientAdded.emit(newIngredient);
+    this.shoppingListService.addIngredient(newIngredient);
+
     //now that the new Ingredient object is created, we can emit it as an event that the shopping-list can listen for
   }
 

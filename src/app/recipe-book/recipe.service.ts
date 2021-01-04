@@ -32,4 +32,7 @@ export class RecipeService {
         this.shoppingListService.addBatchIngredients(ingredients)
     }
 
+    getRecipe(index: number) {
+        return this.recipes[index]
+    }
 }

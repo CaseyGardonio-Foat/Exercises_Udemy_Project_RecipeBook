@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { Recipe } from './recipe.model'
 import { RecipeService } from './recipe.service'
 
 @Component({
@@ -9,16 +8,16 @@ import { RecipeService } from './recipe.service'
   providers: [RecipeService]
 })
 export class RecipeBookComponent implements OnInit {
-  selectedRecipe: Recipe;
-
-  constructor(private recipeService: RecipeService) { }
+  constructor() { }
 
   ngOnInit(){
-    this.recipeService.recipeSelected.subscribe(
-      (recipe: Recipe) =>{
-        this.selectedRecipe = recipe;
-      }
-    );
+    //no longer need this because we are using routing instead; 
+    //all other references to RecipeService deleted from this component
+    // this.recipeService.recipeSelected.subscribe(
+    //   (recipe: Recipe) =>{
+    //     this.selectedRecipe = recipe;
+    //   }
+    // );
   }
     
 

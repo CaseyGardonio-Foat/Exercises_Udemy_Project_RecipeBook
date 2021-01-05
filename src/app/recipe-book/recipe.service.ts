@@ -6,7 +6,8 @@ import { Subject } from 'rxjs'
 
 @Injectable()
 export class RecipeService {
-    @Output() recipeSelected = new Subject<Recipe>()
+    // @Output() recipeSelected = new Subject<Recipe>()
+    //we don't need this anymore because we are using routing to select recipes now
 
     private recipes: Recipe[] = [
         new Recipe('This is a test recipe', 'This is only a test', '../../assets/SwedishChef.gif', 

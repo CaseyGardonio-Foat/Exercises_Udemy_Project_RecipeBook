@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { Ingredient } from 'src/app/shared/ingredient.model';
@@ -19,6 +19,8 @@ export class ShoppingListEditComponent implements OnInit {
   subscription = new Subscription;
   editMode: boolean = false;
   editedItemIndex: number;
+  editedItem: Ingredient;
+  @ViewChild('f') shoppingListForm: NgForm;
 
   constructor(private shoppingListService: ShoppingListService) {}
 
@@ -27,6 +29,11 @@ export class ShoppingListEditComponent implements OnInit {
       (index: number)=>{
         this.editMode = true;
         this.editedItemIndex = index;
+        this.editedItem = this.shoppingListService.getIngredient(index);
+        this.shoppingListForm.setValue({
+          name: this.editedItem.name,
+          amount: this.editedItem.amount
+        })
       }
     )
   }
@@ -46,8 +53,13 @@ export class ShoppingListEditComponent implements OnInit {
     /* New method using angular template-driven forms:*/
     const value = form.value;
     const newIngredient = new Ingredient(value.name, value.amount);
-   
-    this.shoppingListService.addIngredient(newIngredient);
+    
+    if(this.editMode) {
+      this.shoppingListService.updateIngredient(this.editedItemIndex, newIngredient);
+    } else {
+      this.shoppingListService.addIngredient(newIngredient);
+    }
+    
     /*now that the new Ingredient object is created, we can emit it as an event that the shopping-list can listen for
     */
 

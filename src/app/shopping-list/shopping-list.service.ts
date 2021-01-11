@@ -25,4 +25,14 @@ g
         this avoids emitting an event each time a single ingredient from the array is pushed*/
         this.ingredientsUpdated.next(this.ingredients)
     }
+
+    getIngredient(index: number) {
+        return this.ingredients[index];
+    }
+
+    updateIngredient(index: number, newIngredient: Ingredient) {
+        this.ingredients[index]= newIngredient;
+        this.ingredientsUpdated.next(this.ingredients.slice())
+        //nb. he used ingredientsChanged, not ingredientsUpdated--double check the final code to make sure this is correct
+    }
 }

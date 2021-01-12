@@ -13,7 +13,10 @@ export class RecipeEditComponent implements OnInit {
   editMode: boolean = false;
   recipeForm: FormGroup;
 
-  constructor(private route: ActivatedRoute, private router: Router, private recipeService: RecipeService) { }
+  constructor(
+    private route: ActivatedRoute, 
+    private router: Router, 
+    private recipeService: RecipeService) { }
 
   ngOnInit(): void {
     this.route.params.subscribe(
@@ -85,5 +88,11 @@ export class RecipeEditComponent implements OnInit {
     } else {
       this.recipeService.addRecipe(this.recipeForm.value)
     }
+    this.onCancel();
   }
+
+  onCancel() {
+    this.router.navigate(['../'], {relativeTo: this.route});
+  }
+
 }

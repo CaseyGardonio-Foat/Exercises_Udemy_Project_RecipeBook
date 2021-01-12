@@ -8,7 +8,7 @@ import { Subject } from 'rxjs'
 export class RecipeService {
     // @Output() recipeSelected = new Subject<Recipe>()
     //we don't need this anymore because we are using routing to select recipes now
-
+    recipesChanged = new Subject<Recipe[]>();
     private recipes: Recipe[] = [
         new Recipe('This is a test recipe', 'This is only a test', '../../assets/SwedishChef.gif', 
         [new Ingredient ('ingredient1', 1), 
@@ -36,5 +36,15 @@ export class RecipeService {
 
     getRecipe(index: number) {
         return this.recipes[index]
+    }
+
+    addRecipe(recipe: Recipe){
+        this.recipes.push(recipe);
+        this.recipesChanged.next(this.recipes.slice());
+    }
+
+    updateRecipe(index: number, newRecipe: Recipe) {
+        this.recipes[index] = newRecipe;
+        this.recipesChanged.next(this.recipes.slice());
     }
 }

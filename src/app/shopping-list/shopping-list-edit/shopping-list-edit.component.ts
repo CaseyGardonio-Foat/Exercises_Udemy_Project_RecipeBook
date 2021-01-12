@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { Ingredient } from 'src/app/shared/ingredient.model';
@@ -9,7 +9,7 @@ import { ShoppingListService } from '../shopping-list.service'
   templateUrl: './shopping-list-edit.component.html',
   styleUrls: ['./shopping-list-edit.component.css']
 })
-export class ShoppingListEditComponent implements OnInit {
+export class ShoppingListEditComponent implements OnInit, OnDestroy {
   // @ViewChild('nameInput',) nameInputRef: ElementRef; 
   // //for this exercise, we will not use this inside of ngOnInit, so in Angular 9+, we don't need a second argument;
   // //if we *were* going to use this inside of ngOnInit, we would still need to add {static: true} as a second argument here
@@ -20,22 +20,22 @@ export class ShoppingListEditComponent implements OnInit {
   editMode: boolean = false;
   editedItemIndex: number;
   editedItem: Ingredient;
-  @ViewChild('f') shoppingListForm: NgForm;
+  @ViewChild('f', {static: false}) shoppingListForm: NgForm;
 
   constructor(private shoppingListService: ShoppingListService) {}
 
   ngOnInit(): void {
     this.subscription = this.shoppingListService.ingredientStartedEditing.subscribe(
       (index: number)=>{
-        this.editMode = true;
         this.editedItemIndex = index;
+        this.editMode = true;
         this.editedItem = this.shoppingListService.getIngredient(index);
         this.shoppingListForm.setValue({
           name: this.editedItem.name,
           amount: this.editedItem.amount
         })
       }
-    )
+    );
   }
 
   onAddItem(form: NgForm) {
@@ -59,10 +59,23 @@ export class ShoppingListEditComponent implements OnInit {
     } else {
       this.shoppingListService.addIngredient(newIngredient);
     }
-    
+    this.editMode = false;
+    form.reset();
     /*now that the new Ingredient object is created, we can emit it as an event that the shopping-list can listen for
     */
-
   }
 
+  onClear() {
+    this.editMode = false;
+    this.shoppingListForm.reset(); 
+  }
+
+  onDelete() {
+    this.shoppingListService.deleteIngredient(this.editedItemIndex);
+    this.onClear();
+  }
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
+  }
 }

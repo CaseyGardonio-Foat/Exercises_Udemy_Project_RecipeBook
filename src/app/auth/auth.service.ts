@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Subject, throwError } from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
+import { User } from './user.model';
 
 export interface AuthResponseData {
   kind: string;
@@ -17,6 +18,7 @@ export interface AuthResponseData {
   providedIn: 'root'
 })
 export class AuthService {
+  user = new Subject<User>();
 
   constructor(private http: HttpClient) { }
 
@@ -26,17 +28,12 @@ export class AuthService {
       email: email,
       password: password,
       returnSecureToken: true
-    }).pipe(catchError(errorRes =>{
-      let errorMessage = 'An unknown error occurred!';
-      if(!errorRes.error || !errorRes.error.error) {
-        return throwError(errorMessage);
-      }
-      switch(errorRes.error.error.message) {
-        case 'EMAIL_EXISTS': 
-          errorMessage = 'This email already exists!';
-      }
-      return throwError(errorMessage);
-    }));
+    }).pipe(
+      catchError(this.handleError),
+      tap(resData => {
+        this.handleAuthentication(resData.email, resData.localId, resData.idToken, +resData.expiresIn);
+      })
+    );
   }
 
   login(email: string, password: string) {
@@ -45,20 +42,37 @@ export class AuthService {
       email: email,
       password: password,
       returnSecureToken: true
-    });
-    // .pipe(catchError(errorRes =>{
-    //   let errorMessage = 'An unknown error occurred!';
-    //   if(!errorRes.error || !errorRes.error.error) {
-    //     return throwError(errorMessage);
-    //   }
-    //   switch(errorRes.error.error.message) {
-    //     case 'EMAIL_NOT_FOUND': 
-    //       errorMessage = 'This email does not exist on this server!';
-    //     case 'INVALID_PASSWORD': 
-    //       errorMessage = 'Password is not valid!';
-    //   }
-    //   return throwError(errorMessage);
-    // }));
+    }).pipe(
+      catchError(this.handleError),  
+      tap(resData => {
+        this.handleAuthentication(resData.email, resData.localId, resData.idToken, +resData.expiresIn);
+      })
+    );
+  }
+
+  private handleError(errorRes: HttpErrorResponse) {
+    let errorMessage = 'An unknown error occurred!';
+    if(!errorRes.error || !errorRes.error.error) {
+      return throwError(errorMessage);
+    }
+    switch(errorRes.error.error.message) {
+      case 'EMAIL_EXISTS': 
+        errorMessage = 'This email already exists!'
+        break;
+      case 'EMAIL_NOT_FOUND': 
+        errorMessage = 'This email does not exist on this server!'
+        break;
+      case 'INVALID_PASSWORD': 
+        errorMessage = 'Password is not valid!'
+        break;
+    }
+    return throwError(errorMessage);
+  }
+
+  private handleAuthentication(email: string, userId: string, token: string, expiresIn: number) {
+    const expirationDate = new Date(new Date().getTime() + expiresIn * 1000);
+    const user = new User(email, userId, token, expirationDate);
+    this.user.next(user);
   }
 
 }

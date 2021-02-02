@@ -105,7 +105,6 @@ export class AuthService {
 }
 
 /* this is the instructor's code from section 20-301, which also throws the error that there is no property "token" on type "User"
-
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';

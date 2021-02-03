@@ -8,10 +8,11 @@ import { ShoppingListComponent } from './shopping-list/shopping-list.component';
 import { RecipeEditComponent } from './recipe-book/recipe-edit/recipe-edit.component'
 import { RecipeResolverService } from './recipe-book/recipe-resolver.service';
 import { AuthComponent } from './auth/auth.component';
+import { AuthGuard } from './auth/auth.guard';
 
 const appRoutes: Routes = [
     {path: '', redirectTo: '/recipe-book', pathMatch: 'full'},
-    {path: 'recipe-book', component: RecipeBookComponent, children: [
+    {path: 'recipe-book', component: RecipeBookComponent, canActivate:[AuthGuard], children: [
         {path: '', component: RecipeStartComponent},
         {path: 'new', component: RecipeEditComponent},
         {path: ':id', component: RecipeDetailComponent, resolve: [RecipeResolverService]},
